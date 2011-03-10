@@ -1,0 +1,203 @@
+<?php
+session_start();
+class Thankyou extends Controller {
+	
+	function index() {
+		if(!isset($_SESSION['order'])) {
+			redirect('');
+		}
+	
+		$this->load->library('email');
+		$this->load->library('encrypt');
+		
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+	
+		$order = $_SESSION['order'];
+		
+		// Order receipt email
+		$this->email->from('donotreply@buzybeeinc.com');
+		$this->email->to($order['userEmail']);
+		
+		$this->email->subject('Buzy Bee Quick Pak Order Receipt');
+		
+		$order['ccNumber'] = $this->encrypt->decode($order['ccNumber']);
+		$order['ccNumber'] = substr($order['ccNumber'], -4);
+		$order['ccExpiration'] = $this->encrypt->decode($order['ccExpiration']);
+		$order['ccExpiration'] = substr($order['ccExpiration'], 0, 2)."/".substr($order['ccExpiration'], -4);
+		
+		$message = "<html>";
+		$message .= "	<head>";
+		$message .= "	</head>";
+		$message .= "	<body>";
+		$message .= "		<table cellpadding=\"5\" cellspacing=\"0\" border=\"1\">";
+		$message .= "			<tr>";
+		$message .= "				<td align=\"center\" colspan=\"4\">";
+		$message .= "					<p>BuzyBee, Inc.<br />";
+		$message .= "					15507 S. Normandie Ave, Suite 243<br />";
+		$message .= "					Gardena, CA 90247<br />";
+		$message .= "					teamone@buzybeeinc.com</p>";
+		$message .= "				</td>";
+		$message .= "			</tr>";
+		$message .= "			<tr>";
+		$message .= "				<td colspan=\"2\">Order Date: ".date('d/m/Y')."</td>";
+		$message .= "				<td colspan=\"2\" align=\"right\">Order Number: ".$order['transaction']."</td>";
+		$message .= "			</tr>";
+		$message .= "			<tr>";
+		$message .= "				<td>Bill To:</td>";
+		$message .= "				<td>";
+		$message .= "					<p>".$order['billFirst']." ".$order['billLast']."<br />";
+		$message .= "					<br />";
+		$message .= "					".$order['billAddress1']."<br />";
+		$message .= "					".$order['billAddress2']."<br />";
+		$message .= "					".$order['billCity'].", ".$order['billState']." ".$order['billZip']."<br />";
+		$message .= "					".$order['billCountry']."</p>";
+		$message .= "				</td>";
+		$message .= "				<td>Ship To:</td>";
+		$message .= "				<td>";
+		$message .= "					<p>".$order['shipFirst']." ".$order['shipLast']."<br />";
+		$message .= "					<br />";
+		$message .= "					".$order['shipAddress1']."<br />";
+		$message .= "					".$order['shipAddress2']."<br />";
+		$message .= "					".$order['shipCity'].", ".$order['shipState']." ".$order['shipZip']."<br />";
+		$message .= "					".$order['shipCountry']."</p>";
+		$message .= "				</td>";
+		$message .= "			</tr>";
+		$message .= "			<tr>";
+		$message .= "				<td colspan=\"4\">";
+		$message .= "					<table width=\"100%\" cellpadding=\"5\" cellspacing=\"0\" border=\"1\">";
+		$message .= "						<tr>";
+		$message .= "							<th align=\"center\">Product Code</th>";
+		$message .= "							<th align=\"center\">Description</th>";
+		$message .= "							<th align=\"center\">Price (each)</th>";
+		$message .= "							<th align=\"center\">Quantity</th>";
+		$message .= "							<th align=\"center\">Extended</th>";
+		$message .= "						</tr>";
+											foreach($order['contents'] as $item) {
+		$message .= "							<tr>";
+		$message .= "								<td>".$item['code']."</td>";
+		$message .= "								<td>".$item['name']."</td>";
+		$message .= "								<td align=\"right\">";
+														if($item['code'] == 'ref_code') {
+		$message .= "										(".number_format($item['cost'], 2).")";
+														} else {
+		$message .= "										".number_format($item['cost'], 2);
+														}
+		$message .= "								</td>";
+		$message .= "								<td>".$item['quantity']."</td>";
+		$message .= "								<td align=\"right\">";
+														if($item['code'] == 'ref_code') {
+		$message .= "										(".number_format($item['sub'], 2).")";
+														} else {
+		$message .= "										".number_format($item['sub'], 2);
+														}
+		$message .= "								</td>";
+		$message .= "							</tr>";
+												$insert = array(
+													'order_id' => $order['transaction'],
+													'product_code' => $item['code'],
+													'product_name' => $item['name'],
+													'product_cost' => $item['cost'],
+													'product_quantity' => $item['quantity'],
+													'product_lineitem' => $item['sub']
+												);
+													
+												$this->db->insert('order_contents', $insert);
+											}
+		$message .= "					</table>";
+		$message .= "				</td>";
+		$message .= "			</tr>";
+		$message .= "			<tr>";
+		$message .= "				<td colspan=\"4\">";
+		$message .= "					<table width=\"100%\">";
+		$message .= "						<tr>";
+		$message .= "							<td>";
+		$message .= "								<p>Shipping Option:<br />";
+		$message .= "								Cardholder's Name:<br />";
+		$message .= "								Credit Card (Last Four):<br />";
+		$message .= "								Expiration:<br />";
+		$message .= "								E-Mail:</p>";
+		$message .= "							</td>";
+		$message .= "							<td>";
+		$message .= "								<p>".($order['shipping'] == 3.5) ? 'Domestic Shipping' : 'Priority Shipping';
+		$message .= "								<br />".$order['billFirst']." ".$order['billLast']."<br />";
+		$message .= "								".$order['ccNumber']."<br />";
+		$message .= "								".$order['ccExpiration']."<br />";
+		$message .= "								".$order['userEmail']."</p>";
+		$message .= "							</td>";
+		$message .= "							<td>";
+		$message .= "								<p><br />Sub-Total:<br />";
+		$message .= "								Sales Tax:<br />";
+		$message .= "								Shipping/Handling:<br />";
+		$message .= "								Total:</p>";
+		$message .= "							</td>";
+		$message .= "							<td align=\"right\">";
+		$message .= "								<p><br />".number_format($order['subtotal'], 2)."<br />";
+		$message .= "								".number_format($order['tax'], 2)."<br />";
+		$message .= "								".number_format($order['ship_handling'], 2)."<br />";
+		$message .= "								".number_format($order['total'], 2)."</p>";
+		$message .= "							</td>";
+		$message .= "						</tr>";
+		$message .= "					</table>";
+		$message .= "				</td>";
+		$message .= "			</tr>";
+		$message .= "			<tr>";
+		$message .= "				<td align=\"center\" colspan=\"4\">";
+		$message .= "					<p>Your credit card will not be charged until your order ships.<br />";
+		$message .= "					<br />";
+		$message .= "					Please allow 2-6 weeks for delivery.<br />";
+		$message .= "					<br />";
+		$message .= "					All orders plus applicable tax, 30-day money back guarantee (minus S&H)<br />";
+		$message .= "					<br />";
+		$message .= "					\"DO NOT REPLY to this email, it is sent from an unmonitored email box\".<br />";
+		$message .= "					<br />";
+		$message .= "					<strong>Thank you for your order!<strong></p>";
+		$message .= "				</td>";
+		$message .= "			</tr>";
+		$message .= "		</table>";
+		$message .= "	</body>";
+		$message .= "</html>";
+		
+		$insert = array(
+			'order_id' => $order['transaction'],
+			'user_id' => $order['userID'],
+			'order_subtotal' => $order['subtotal'],
+			'order_shipping' => $order['ship_handling'],
+			'order_tax' => $order['tax'],
+			'order_total' => $order['total'],
+			'order_shiptype' => $order['shipType']
+		);
+			
+		$this->db->insert('order', $insert);
+		
+		$this->email->message($message);
+		
+		$this->email->send();		
+		$this->email->clear();
+		
+		// Referral code email
+		$this->email->to($order['userEmail']);
+		$this->email->from('donotreply@buzybeeinc.com');
+		$this->email->subject('Buzy Bee Discount Opportunity');
+		$this->email->message('Thank you, for your purchase.  We would like to give you an opportunity to receive 50% off your next purchase.  If you provide five family/friend referrals, you will receive a 50% coupon code for your next purchase.  Please provide First name, Last name and Email.  All emails must be valid to qualify for this promotion.  All information provided is protected by our Privacy Notice.  '.base_url().'/referral<br />
+		<br />
+		Thank you,<br />
+		<br />
+		TeamOne');
+		$this->email->send();
+		
+		$data['page'] = "thankyou_view";
+		$data['order'] = $order;
+		$data['subtotal'] = $order['subtotal'];
+		$data['tax'] = $order['tax'];
+		$data['shipping'] = $order['ship_handling'];
+		$data['total'] = $order['total'];
+		
+		unset($_SESSION['order']);
+		
+		$this->load->view('main/main_view', $data);
+	}
+	
+}
+
+//end thankyou

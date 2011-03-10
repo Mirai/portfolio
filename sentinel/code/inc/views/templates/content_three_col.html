@@ -1,0 +1,42 @@
+<style>
+	
+</style>
+
+
+<!-- Apply view-specific css classes to #REDUNDANT_CONTENT_WRAPPER to
+			alter the default styling of the elements in this template -->
+<div id="REDUNDANT_CONTENT_WRAPPER" class="{{VIEW_CSS}}">
+
+	<!-- this is horizontal header area  --> 
+	<div id="CONTENT_ABOVE">{{CONTENT_ABOVE}}</div> 	
+	
+	<!-- WRAPPER FOR PRIMARY AND SECONDARY -->
+	<div id="CONTENT_PRIMARY_SECONDARY_WRAPPER">
+	
+		<!-- this is usually center or leftmost column -->
+		<div id="CONTENT_PRIMARY">
+			{{CONTENT_PRIMARY}}
+			<div style="clear:both;"></div>	
+		</div>		
+		<!-- this is usually right column/sidebar --> 
+		<div id="CONTENT_SECONDARY">
+			{{CONTENT_SECONDARY}}
+			<div style="clear:both;"></div>	
+		</div>
+
+		<div style="clear:both;"></div>	
+
+	</div>
+		
+	<!-- this is usually left column/sidebar --> 
+	<div id="CONTENT_TERTIARY">
+		{{CONTENT_TERTIARY}}
+	</div>
+	
+	<div style="clear:both;"></div>	
+
+	<!-- this is horizontal footer area  --> 
+	<div id="CONTENT_BELOW">{{CONTENT_BELOW}}</div>
+	
+	<div style="clear:both;"></div>	
+</div><!-- closes #REDUNDANT_CONTENT_WRAPPER -->

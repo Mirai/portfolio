@@ -1,0 +1,116 @@
+<DIV class="CONTENT_ALL_TOP"><img src="/assets/image/big_content_top.jpg" width="942" height="9" /></DIV>
+			
+<DIV class="CONTENT_ALL_MIDDLE"><table width="830px" align="center" class="pad">
+	<tr>
+		<td align="center" colspan="4">
+			<h1>BuzyBee, Inc.<br />
+			15507 S. Normandie Ave<br />
+			Gardena, CA 90247</h1>
+			teamone@buzybeeinc.com<br />
+			donotreply@buzybeeinc.com
+		</td>
+	</tr>
+	<tr height="20px">
+		<td colspan="2"><br /><strong>Order Date:</strong> <?= date("m/d/Y") ?></td>
+		<td colspan="2" align="left"><br /><strong>Order Number:</strong> <?= $order['transaction'] ?></td>
+	</tr>
+	<tr>
+		<td valign="top"><br /><strong>Bill To:</strong></td>
+		<td><br />
+			<p><?= htmlentities($order['billFirst'], ENT_QUOTES)." ".htmlentities($order['billLast'], ENT_QUOTES) ?><br />
+			<?= htmlentities($order['billAddress1'], ENT_QUOTES) ?><br />
+			<?= htmlentities($order['billAddress2'], ENT_QUOTES) ?><br />
+			<?= htmlentities($order['billCity'], ENT_QUOTES).", ".htmlentities($order['billState'], ENT_QUOTES)." ".htmlentities($order['billZip'], ENT_QUOTES) ?><br />
+			<?= htmlentities($order['billCountry'], ENT_QUOTES) ?></p>
+		</td>
+		<td valign="top"><br /><strong>Ship To:</strong></td>
+		<td><br />
+			<p><?= htmlentities($order['shipFirst'], ENT_QUOTES)." ".htmlentities($order['shipLast'], ENT_QUOTES) ?><br />
+			<?= htmlentities($order['shipAddress1'], ENT_QUOTES) ?><br />
+			<?= htmlentities($order['shipAddress2'], ENT_QUOTES) ?><br />
+			<?= htmlentities($order['shipCity'], ENT_QUOTES).", ".htmlentities($order['shipState'], ENT_QUOTES)." ".htmlentities($order['shipZip'], ENT_QUOTES) ?><br />
+			<?= htmlentities($order['shipCountry'], ENT_QUOTES) ?></p>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<table width="100%">
+				<tr>
+					<th align="left"><br />Product Code</th>
+				  <th align="left"><br />Description</th>
+				  <th align="left"><br />Price (each)</th>
+				  <th align="left"><br />Quantity</th>
+					<th align="left"><br />Extended</th>
+				</tr>
+				<?php
+				$amount = 0;
+				foreach($order['contents'] as $item) { ?>
+					<tr>
+<<<<<<< .mine
+						<td></td>
+						<td><?= htmlentities($item['name'], ENT_QUOTES) ?></td>
+						<td align="right"><?= ($item['code'] == 'ref_code') ? '('.number_format(htmlentities($item['cost'], ENT_QUOTES), 2).')' : number_format(htmlentities($item['cost'], ENT_QUOTES), 2) ?></td>
+						<td><?= htmlentities($item['quantity'], ENT_QUOTES) ?></td>
+						<td align="right"><?= ($item['code'] == 'ref_code') ? '('.number_format(htmlentities($item['sub'], ENT_QUOTES), 2).')' : number_format(htmlentities($item['sub'], ENT_QUOTES), 2) ?></td>
+=======
+
+						<td align="left"></td>
+						<td align="left"><?= htmlentities($item['name'], ENT_QUOTES) ?></td>
+						<td align="left"><?= ($item['code'] == 'ref_code' ? '('.number_format(htmlentities($item['cost'], ENT_QUOTES), 2).')' : number_format(htmlentities($item['cost'], ENT_QUOTES), 2) ?></td>
+						<td align="left"><?= htmlentities($item['quantity'], ENT_QUOTES) ?></td>
+						<td align="left"><?= ($item['code'] == 'ref_code' ? '('.number_format(htmlentities($item['sub'], ENT_QUOTES), 2).')' : number_format(htmlentities($item['sub'], ENT_QUOTES), 2) ?></td>
+
+>>>>>>> .r53
+					</tr>
+				<?php
+				} ?>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<table width="100%">
+				<tr>
+					<td><br />
+						<p><strong>Shipping Option:</strong><br />
+						  <strong>Cardholder's Name:</strong><br />
+						  <strong>Credit Card (Last Four):</strong><br />
+						  <strong>Expiration:</strong><br />
+					    <strong>E-Mail:</strong></p>
+					</td>
+					<td><br />
+						<p><?= ($order['shipping'] == 3.5) ? 'Domestic Shipping' : 'Priority Shipping' ?><br />
+						<?= htmlentities($order['billFirst'], ENT_QUOTES)." ".htmlentities($order['billLast'], ENT_QUOTES) ?><br />
+						<?= htmlentities($order['ccNumber'], ENT_QUOTES) ?><br />
+						<?= htmlentities($order['ccExpiration'], ENT_QUOTES) ?><br />
+						<?= htmlentities($order['userEmail'], ENT_QUOTES) ?></p>
+					</td>
+					<td><br />
+						<p><br />
+						  <strong>Sub-Total:</strong><br />
+						  <strong>Sales Tax:</strong><br />
+						  <strong>Shipping/Handling:</strong><br />
+					    <strong>Total:</strong></p>
+					</td>
+					<td align="right"><br />
+						<p><br /><?= number_format($subtotal, 2) ?><br />
+						<?= number_format($tax, 2) ?><br />
+						<?= number_format($shipping, 2) ?><br />
+						<?= number_format($total, 2) ?></p>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="4"><br />
+			<p>Your credit card will not be charged until your order ships.<br />
+			Please allow 2-6 weeks for delivery.<br />
+			All orders plus applicable tax, 30-day money back guarantee (minus P&H)<br />
+			"DO NOT REPLY to this email, it is sent from an unmonitored email box".<br />
+			<strong>Thank you for your order!<strong></p>
+		</td>
+	</tr>
+</table></DIV>
+
+<DIV class="CONTENT_ALL_BOTTOM"><img src="/assets/image/big_content_bottom.jpg" width="942" height="9" /></DIV>
